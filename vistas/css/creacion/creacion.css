@@ -1,0 +1,189 @@
+.bordeGrueso {
+    border: 3px solid black;
+}
+
+.bordeFino {
+    border: 1px solid black;
+}
+
+h1 {
+    color: white;
+}
+
+.colorForndoBlanco {
+    background-color: white;
+}
+
+.paddingSuperior {
+    padding-top: 80px !important;
+}
+
+.altoMinimo{
+    height: 100%;
+}
+
+.altoMinimoElemento{
+    height: 60px;
+}
+
+.altoMinimoElementoInterno{
+    height: 100px;
+}
+
+.altoMinimoElementoFinal{
+    
+    height: 20px;
+}
+
+.paddingInterior {
+    padding-top:  10px;
+    padding-bottom:  10px;
+}
+
+.margenInterno {
+    margin-top:  10px;
+    margin-bottom:  10px;
+}
+
+.colorVerde {
+    background-color : green;
+}
+
+.colorAzulOscuro {
+    background-color: #004080;
+}
+
+.colorNaranja {
+    background-color : #F05F40;
+}
+
+.wrapper {
+  display: block !important;
+  align-items: center !important;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
+  background: rgba(240, 95, 64, 0.85);
+}
+
+.marcado {
+    border-bottom: 5px solid;
+}
+
+.bordeError {
+    border: 1px solid red !important;
+}
+
+.sinBorde {
+    border: none;
+}
+
+.conBorde {
+    border: 1px solid black !important;
+}
+
+input.nombreMarco:hover {
+    border: 1px solid black !important;
+}
+
+.input-group-addon:hover {
+    cursor: pointer;
+    background-color: #ccc;
+    color: black;
+    border-color: #ccc;
+}
+.fa-floppy-o:hover {
+    
+}
+
+
+/* ARROWS */
+.arrowText {
+    position:relative;
+    margin: 20px;
+    width:50px;
+    height: 48px;
+    background: #ddd;
+    border:solid 1px #555;
+    float: left;
+}
+.arrowText:before, .arrowText:after {
+    content: " ";
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+}
+
+/* TOP ARROW */
+.arrowTop:before, .arrowTop:after {
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    left: -1px;
+}
+.arrowTop:after {
+    border-bottom: 16px solid #ddd;
+    top: -15px;
+    z-index: 2;
+}
+
+.arrowTop:before {
+    border-bottom: 16px solid black;
+    top: -16px;
+    z-index: 1;
+}
+
+/* BOTTOM ARROW */
+.arrowBottom:before, .arrowBottom:after {
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    left: 0;
+}
+.arrowBottom:after {
+    border-top: 16px solid #ddd;
+    bottom: -16px;
+    z-index: 2;
+}
+.arrowBottom:before {
+    border-top: 16px solid black;
+    bottom: -17px;
+    z-index: 1;
+}
+
+/* RIGHT ARROW */
+.arrowRight:before, .arrowRight:after {
+    border-bottom: 25px solid transparent;
+    border-top: 25px solid transparent;
+    top:-1px;
+}
+.arrowRight:after {
+    border-left: 16px solid #ddd;
+    right: -15px;
+    z-index: 2;
+}
+
+.arrowRight:before {
+    border-left: 16px solid black;
+    right: -16px;
+    z-index: 1;
+}
+
+/* LEFT ARROW */
+.arrowLeft:before, .arrowLeft:after {
+    border-top: 25px solid transparent;
+    border-bottom: 25px solid transparent;
+
+    top:-1px
+}
+.arrowLeft:after {
+    border-right: 16px solid #ddd;
+    left: -15px;
+    z-index: 2;
+}
+.arrowLeft:before {
+    border-right: 16px solid black;
+    left: -16px;
+    z-index: 1;
+}
