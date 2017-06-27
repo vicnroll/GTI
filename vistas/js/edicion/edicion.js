@@ -1,6 +1,7 @@
 const esPrimera = true;
 const esIntermedia = false;
-
+var jsonFiles = new Array();
+var numFicheros = 0;
 var numFilas = 0;
 var numSeparador = 0;
 var numEdicion = 0;
@@ -80,6 +81,8 @@ function formatearFila(fila, separaciones, direcciones){
 }
 
 function editarSeparacion(idSeparador) {
+    $("#summernote").summernote({ 
+        height: 200 });
     $("#modalEdicion").modal("show");
 }
 
@@ -147,4 +150,29 @@ function crearNivelInferior(color, columnas, separacion, direcciones){
 function cambiarColor2(idInput, color){
     $("#" + idInput).css("background-color",color);
     $("#" + idInput).attr("data-color",color);
+}
+
+function listarDocumentos(){
+    var files = $("#file1").prop("files");
+    var jsonFilesAux = new Array();
+    for (var i = 0; i < files.length; i++) {
+        jsonFilesAux.push(files[i]);
+    }
+    $("#file1").val("");
+
+    pintarListaFicheros(jsonFilesAux);
+    
+    //<a onclick="eliminarTagDocPrinc()"><i class="fa fa-times"></i></a><a id="docPrincipal" href="#" onclick="previewDoc(&quot;docPrincipal&quot;)" class="gris">  losherederos.pdf </a>
+}
+
+function pintarListaFicheros(jsonFilesAux){
+    if((numFicheros + jsonFilesAux.length) < 4) {
+        numFicheros = numFicheros + jsonFilesAux.length;
+        for (var i = 0; i < jsonFilesAux.length; i++) {
+            jsonFiles.push(jsonFilesAux[i]);
+            var name = jsonFilesAux[i].name;
+            $("#documentos").append("<div id='divdocadjun" + i + "'><a class='cursor'><i class='fa fa-times cruzRoja'></i></a><a id='docadjun" + i + "' class='cursor gris'> " + name + "</a><br /></div>");
+        }
+    }
+    
 }
