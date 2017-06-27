@@ -4,7 +4,12 @@ const esIntermedia = false;
 var nombreMarcoActual = "";
 var idMarcoActual = "";
 var numFilas = 0;
+var numSeparador = 0;
+var numColumnas = 0;
+var numPilares = 0;
+
 var defaultColor = "#F05F40"; 
+var defaultSeparaciones = "1";
 //var defaultMarco = {"filas":[[2,"#f05f40,#004080"]],"columnas":[[3,"Bottom,Top,Top"]]};
 var defaultMarco = {"filas":[[4,"#004000,#f05f40,#004080,#ff80ff"]],"columnas":[[3,"Top,Bottom,Top"],[3,"Bottom,Top,Top"],[3,"Top,Top,Bottom"]]};
 var columnasDefault = "Bottom,Top,Top";
@@ -12,66 +17,212 @@ $(document).ready(function(){
     cambiarDireccionListener();
     inputListener();
     recuperarMarcosUsuario();
-    //cargarEstructuraMarco(defaultMarco);
 });
 
-function crearFila(color){
-    numFilas++;
-    var fila = $("<div>").addClass("col-xs-12 col-sm-12 col-md-12 col-lg-12 bordeFino altoMinimoElemento margenInterno fila");
-    fila.append($("<input>").attr("id","color" + numFilas).attr("type","color").attr("value",color).attr("onchange","cambiarColor('color" + numFilas + "')").addClass("pull-right margenInterno"));
-    return fila;
+function crearInputColor(color){
+  return $("<input>").attr("id","color" + numFilas).attr("type","color").attr("value",color).attr("onchange","cambiarColor('color" + numFilas + "')").addClass("pull-right margenInterno");
 }
 
-function crearColumna(primeraColumna, direccion){
-    var offset = (primeraColumna ? "2" : "1");
-    
-    var columna = $("<div>").addClass("col-lg-offset-" + offset + " col-md-offset-" + offset + " col-sm-offset-" + offset + " col-xs-offset-" + offset + " col-xs-2 col-sm-2 col-md-2 col-lg-2 altoMinimoElementoInterno margenInterno pilar")
-    .append($("<div>").addClass("text-center arrowText arrow" + direccion).append($("<i>").addClass("margenInterno fa fa-refresh fa-2x")));
-    return columna;
-}
-
-function crearContenedorColumnas(columnas){
-    var columna = columnas.split(",");
-    var contenedor = $("<div>").addClass("col-xs-12 col-sm-12 col-md-12 col-lg-12 margenInterno columna");
-    for (var i = 0; i < columna.length; i++) {
-        contenedor.append(crearColumna((i == 0 ? true : false), columna[i]));   
-    }
+function crearContenedorFilas(color){
+    var contenedor = $("<div>").addClass("col-xs-12 col-sm-12 col-md-12 col-lg-12 margenInterno contenedorFila");
+    contenedor.append(crearFila(color)).append(crearInputColor(color));
     
     return contenedor;
 }
 
-function crearNivelSuperior(color, columnas){
-    var contenidoVacio = ($("#contenido > div").length == 1 ? true : false);
+function crearFila(color){
+    numFilas++;
+    var fila = $("<div>").attr("id","fila" + numFilas).addClass("col-xs-10 col-sm-10 col-md-10 col-lg-10 bordeFino altoMinimoElemento margenInterno fila");
+    return fila;
+}
 
-    if(columnas == "undefined" || columnas == "" || columnas == null) columnas = columnasDefault;
-    if(color == null || color == "undefined" || color == "") color = defaultColor;
+function formatearFila(fila, separaciones, direcciones){
+    $(fila).find(".separador").remove();
+    var numSeparaciones = "";
+    var idFila = "";
 
-    if(contenidoVacio && columnas == columnasDefault && color == defaultColor){
-        $("#contenido > div:nth-last-child(1)").after(crearFila(defaultColor));
-        cambiarColor("color" + numFilas);
+    if(esNullOVacio(separaciones)){
+        numSeparaciones = defaultSeparaciones;
+        idFila = numFilas;
+    } else {
+        numSeparaciones = separaciones + "";
+        idFila = $(fila).find(".fila").attr("id").split("ila")[1];
     }
+    var strDirecciones;
+    if(esNullOVacio(direcciones)) {
+        strDirecciones = ["fa-long-arrow-right","fa-long-arrow-left"];
+    } else {
+        strDirecciones = direcciones;
+    }
+     
+    switch(numSeparaciones){
+        case "1": 
+            $(fila).find(".fila").append($("<div>").addClass("col-xs-12 col-sm-12 col-md-12 col-lg-12 separador split text-center")
+                    .append($("<span>").attr("onclick","separarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-columns fa-2x"))));
+        break;
+        case "2":
+            $(fila).find(".fila").append($("<div>").addClass("col-xs-5 col-sm-5 col-md-5 col-lg-5 separador split text-center")
+                    .append($("<span>").attr("onclick","separarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-columns fa-2x")))
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))))
+                .append($("<div>").addClass("col-xs-2 col-sm-2 col-md-2 col-lg-2 separador direccion text-center").css("margin-top","0")
+                    .append($("<span>").attr("onclick","cambiarDireccionSeparador('#separador" + numSeparador + "')").append($("<i id='separador" + (numSeparador++) + "'>").addClass("fa " + strDirecciones[0] + " fa-4x"))))
+                .append($("<div>").addClass("col-xs-5 col-sm-5 col-md-5 col-lg-5 separador split text-center")
+                    .append($("<span>").attr("onclick","separarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-columns fa-2x")))
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))));
+        break
+        case "3": 
+            $(fila).find(".fila").append($("<div>").addClass("col-xs-3 col-sm-3 col-md-3 col-lg-3 separador split text-center")
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))))
+                .append($("<div>").addClass("col-xs-2 col-sm-2 col-md-2 col-lg-2 separador direccion text-center").css("margin-top","0")
+                    .append($("<span>").attr("onclick","cambiarDireccionSeparador('#separador" + numSeparador + "')").append($("<i id='separador" + (numSeparador++) + "'>").addClass("fa " + strDirecciones[1] + " fa-4x"))))
+                .append($("<div>").addClass("col-xs-2 col-sm-2 col-md-2 col-lg-2 separador split text-center")
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))))
+                .append($("<div>").addClass("col-xs-2 col-sm-2 col-md-2 col-lg-2 separador direccion text-center").css("margin-top","0")
+                    .append($("<span>").attr("onclick","cambiarDireccionSeparador('#separador" + numSeparador + "')").append($("<i id='separador" + (numSeparador++) + "'>").addClass("fa " + strDirecciones[0] + " fa-4x"))))
+                .append($("<div>").addClass("col-xs-3 col-sm-3 col-md-3 col-lg-3 separador split text-center")
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))));
+        break;
+        case 4: 
+            $(fila).find(".fila").append($("<div>").addClass("col-xs-3 col-sm-3 col-md-3 col-lg-3 separador split text-center")
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))))
+                .append($("<div>").addClass("col-xs-3 col-sm-3 col-md-3 col-lg-3 separador split text-center")
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))))
+                .append($("<div>").addClass("col-xs-3 col-sm-3 col-md-3 col-lg-3 separador split text-center")
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))))
+                .append($("<div>").addClass("col-xs-3 col-sm-3 col-md-3 col-lg-3 separador split text-center")
+                    .append($("<span>").attr("onclick","juntarFila('fila" + idFila + "')").append($("<i>").addClass("fa fa-times fa-2x"))));
+        break;
+    }
+    
+    return fila;
+}
 
-    $("#contenido > div:nth-child(1)").before(crearFila(color));
-    cambiarColor("color" + numFilas);
-    $("#contenido > div:nth-child(1)").after(crearContenedorColumnas(columnas));
+function cambiarDireccionSeparador(idSeparador){
+    $(idSeparador).toggleClass("fa-long-arrow-right fa-long-arrow-left");
+}
 
+function separarFila(idFila){
+    var numSeparaciones = $("#" + idFila).find(".split").length;
+
+    if(numSeparaciones < 3){
+        $("#" + idFila).parent().replaceWith(formatearFila($("#" + idFila).parent(), numSeparaciones + 1));
+    }
+}
+
+function juntarFila(idFila){
+    var numSeparaciones = $("#" + idFila).find(".split").length;
+
+    if(numSeparaciones < 4){
+        $("#" + idFila).parent().replaceWith(formatearFila($("#" + idFila).parent(), numSeparaciones - 1));
+    }
+}
+
+function crearColumna(primeraColumna, direccion, totalColumnas){
+    var clases = "";
+    var onclick = "";
+    var fa = "";
+    if(totalColumnas > 1){
+        onclick = "eliminarPilar('#pilar" + numPilares + "')";
+        fa = "fa-minus";
+    }
+        
+    switch(totalColumnas){
+        case 1:
+            clases = "col-lg-offset-4 col-md-offset-4 col-sm-offset-4 col-xs-2 col-sm-2 col-md-2 col-lg-2 altoMinimoElementoInterno margenInterno pilar";
+        break;
+        case 2:
+            if(primeraColumna)
+                clases = "col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-xs-2 col-sm-2 col-md-2 col-lg-2 altoMinimoElementoInterno margenInterno pilar";
+            else
+                clases = "col-lg-offset-4 col-md-offset-4 col-sm-offset-4 col-xs-2 col-sm-2 col-md-2 col-lg-2 altoMinimoElementoInterno margenInterno pilar";
+        break;
+        case 3:
+            clases = "col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-xs-2 col-sm-2 col-md-2 col-lg-2 altoMinimoElementoInterno margenInterno pilar";
+        break;
+    }
+    var offset = (primeraColumna ? "0" : "0");
+    
+    var columna = $("<div id='pilar" + (numPilares++) + "'>").addClass(clases).css("padding-left","0 !important")
+        .append($("<span>").attr("onclick", onclick).append($("<i>").addClass("fa " + fa)))
+        .append($("<div>").addClass("text-center arrowText arrow" + direccion).append($("<i>").addClass("margenInterno fa fa-refresh fa-2x")));
+    return columna;
+}
+
+function eliminarPilar(idPilar){
+    var idColumna = "#" + $(idPilar).parents(".columna").attr("id");
+    $(idPilar).remove();
+
+    var numPilares = $(idColumna).find(".pilar").length;
+    if(numPilares < 4){
+        var columnas = "";
+        $(idColumna).find(".arrowText").each(function(){ columnas += ($(this).hasClass("arrowTop") ? "Top," : "Bottom,"); });
+        if(!esNullOVacio(columnas)) columnas = columnas.substr(0, columnas.length - 1);
+        $(idColumna).replaceWith(crearContenedorColumnas(columnas));
+    }
     cambiarDireccionListener();
 }
 
-function crearNivelInferior(color, columnas){
-    var contenidoVacio = ($("#contenido > div").length == 1 ? true : false);
+function crearPilar(idColumna){
 
-    if(columnas == "undefined" || columnas == "" || columnas == null) columnas = columnasDefault;
-    if(color == null || color == "undefined" || color == "") color = defaultColor;
+    var numPilares = $(idColumna).find(".pilar").length;
+    if(numPilares < 3){
+        var columnas = "";
+        $(idColumna).find(".arrowText").each(function(){ columnas += ($(this).hasClass("arrowTop") ? "Top," : "Bottom,"); });
+        var contenedor = crearContenedorColumnas(columnas + "Top");
+        if(contenedor.find(".pilar").length == 3) contenedor.find("#btn" + (numColumnas-1)).prop("disabled", true);
+        $(idColumna).replaceWith(contenedor);
+    }
+    cambiarDireccionListener();
+}
 
-    if(contenidoVacio){
-        $("#contenido > div:nth-last-child(1)").before(crearFila(defaultColor));
-        cambiarColor("color" + numFilas);
+function crearContenedorColumnas(columnas){
+    var columna = columnas.split(",");
+    var contenedor = $("<div id='columna" + numColumnas + "'>").addClass("col-xs-10 col-sm-10 col-md-10 col-lg-10 margenInterno columna")
+                        .append($("<div>").addClass("col-xs-1 col-sm-1 col-md-1 col-lg-1")
+                            .append($("<button id='btn" + numColumnas + "'>").attr("onclick","crearPilar('#columna" + (numColumnas++)  + "')").addClass("btn btn-primary").css("margin-top","35px").append($("<i>").addClass("fa fa-plus"))));
+    
+    for (var i = 0; i < columna.length; i++) {
+        contenedor.append(crearColumna((i == 0 ? true : false), columna[i], columna.length));   
     }
 
-    $("#contenido > div:nth-last-child(1)").after(crearFila(color));
+    return contenedor;
+}
+
+function crearNivelSuperior(color, columnas, separaciones, direcciones){
+    desbloquearBotones();
+    var contenidoVacio = ($("#contenido > div").length == 1 ? true : false);
+
+    if(esNullOVacio(columnas)) columnas = columnasDefault;
+    if(esNullOVacio(color)) color = defaultColor;
+    if(esNullOVacio(separaciones)) separaciones = defaultSeparaciones;
+
+    if(contenidoVacio && columnas == columnasDefault && color == defaultColor){
+        $("#contenido > div:nth-child(1)").before(formatearFila(crearContenedorFilas(defaultColor), separaciones, direcciones));
+        cambiarColor("color" + numFilas);
+    }
+    $("#contenido > div:nth-child(1)").before(formatearFila(crearContenedorFilas(color), separaciones, direcciones));
+    cambiarColor("color" + numFilas);
+    $("#contenido > div:nth-child(1)").after(crearContenedorColumnas(columnas));
+    if($("#columna" + numFilas).find(".pilar").length == 3) $("#btn" + numFilas).prop("disabled", true);
+    cambiarDireccionListener();
+}
+
+function crearNivelInferior(color, columnas,separaciones, direcciones){
+    desbloquearBotones();
+    var contenidoVacio = ($("#contenido > div").length == 1 ? true : false);
+
+    if(esNullOVacio(columnas)) columnas = columnasDefault;
+    if(esNullOVacio(color)) color = defaultColor;
+    if(esNullOVacio(separaciones)) separaciones = defaultSeparaciones;
+
+    if(contenidoVacio && columnas == columnasDefault && color == defaultColor){
+        $("#contenido > div:nth-last-child(1)").after(formatearFila(crearContenedorFilas(defaultColor), separaciones, direcciones));
+        cambiarColor("color" + numFilas);
+    }
+    $("#contenido > div:nth-last-child(1)").after(formatearFila(crearContenedorFilas(color), separaciones, direcciones));
     cambiarColor("color" + numFilas);
     $("#contenido > div:nth-last-child(1)").before(crearContenedorColumnas(columnas));
+    if($("#columna" + numFilas).find(".pilar").length == 3) $("#btn" + numFilas).prop("disabled", true);
     cambiarDireccionListener();
 }
 
@@ -108,218 +259,13 @@ function inputListener(){
 
 function cambiarColor(idInput){
     var color = $("#" + idInput).val();
-    $("#" + idInput).parent().css("background-color",color);
+    var idFila = "#fila" + idInput.split("lor")[1];
+    $(idFila).css("background-color",color);
+    $(idFila).attr("data-color",color);
 }
 
-function guardarMarco(accion){
-    // El único requisito para guardarlo es que tenga un nombre
-    // El número de filas y columnas es relativo, puede ser todo 0 si hace falta
-    if($("#nombreMarco")[0].checkValidity()){
-        // Estructura JSON del marco
-        var marco = {nombre: $("#nombreMarco").val(), idUsuario: sessionStorage.getItem("token"), filas: [], columnas:[]};
-
-        // Recuperamos Filas 
-        var colores = "";
-        $(".fila").each(function(){
-            colores += $(this).find("input").val() + ",";
-        });
-        colores = colores.substr(0 , colores.length - 1);
-        marco.filas.push([numFilas, colores]);
-
-        // Recuperamos Columnas
-        $(".columna").each(function () {
-            var totalPilares = $(this).find(".pilar").length;
-            var direcciones = "";
-            $(this).find(".pilar .arrowText").each(function(){
-                if($(this).hasClass("arrowBottom")) direcciones += "Bottom,";
-                else direcciones += "Top,";
-            });
-            direcciones = direcciones.substr(0, direcciones.length - 1)
-            marco.columnas.push([totalPilares, direcciones]);
-        });
-
-        console.log(JSON.stringify(marco));
-
-        enviarMarco(marco, accion);
-    } else {
-        // No tiene nombre 
-        $("input.current.nombreMarco").addClass("bordeError");
-    }
-}
-
-function enviarMarco(marco, accion){
-
-    var handler = "";
-    switch(accion){
-        case "actualizar": 
-            handler = "/marcos/actualizar";
-            $("#mensajeConfirmacion").html("Reajustando Marco");
-            $(".fa-spin").addClass("fa-cog");
-        break;
-        case "guardar": 
-            handler = "/marcos/guardar";
-            $("#mensajeConfirmacion").html("Creando Marco");
-            $(".fa-spin").addClass("fa-cog");
-        break;
-    }
-    
-    $("#modalMarco").modal("hide");
-    $("#modalConfirmacion").modal("show");
-    $.post(handler,{idMarco: idMarcoActual, idUsuario: marco.idUsuario, nombre: marco.nombre, filas: JSON.stringify(marco.filas), columnas: JSON.stringify(marco.columnas)}, 
-    function(data){
-        $(".fa-spin").removeClass("fa-cog");
-        $(".fa-spin").removeClass("fa-spinner");
-        if(data != "-1"){
-            if(accion == "guardar"){
-                var data = $("#tablaListaMarcos").dataTable().fnAddData({id: data.id, nombre: data.nombre});
-                var row = $("#tablaListaMarcos").dataTable().fnSettings().aoData[data[0]].nTr;
-                $("#tablaListaMarcos tr").removeClass("current");
-                $(row).addClass("current");
-                nombreMarcoActual = marco.nombre;
-                idMarcoActual = data.id;
-            } 
-            
-            $("#tablaListaMarcos .current a").text(marco.nombre);
-            
-            $("#mensajeConfirmacion").html("Marco " + (accion == "guardar" ? "guardado" : "actualizado") + " correctamente");
-            $(".fa-spin").addClass("fa-check-circle").css("color","green");
-        
-        } else {
-            $("#mensajeConfirmacion").html("Lo lamentamos, no hemos ningún usuario");
-            $(".fa-spin").addClass("fa-times-circle").css("color","red");
-        }
-        $(".fa-spin").removeClass("fa-spin");
-    });
-}
-
-function eliminarMarcosUsuario(id){
-    $.post("/marcos/eliminar", {idMarco: id}, function(data){
-        if(data != "-1"){
-            cargarListaMarcos(data);
-        } else {
-            $("#listaMarcos").append(cargarListaNuevoMarco());
-        }
-    });
-}
-
-function recuperarMarcosUsuario(){
-    $.post("/marcos/recuperar", {idUsuario: sessionStorage.getItem("token")}, function(data){
-        if(data != "-1"){
-            cargarTablaMarcos(data);
-        } else {
-            $("#listaMarcos").append(cargarListaNuevoMarco());
-        }
-    });
-}
-
-function cargarTablaMarcos(historial){
-    var t = $("<table>").attr("id","tablaListaMarcos").addClass("table stripe col-xs-12 col-sm-12 col-md-12 col-lg-12")
-                .append($("<thead>").append($("<tr>").append($("<th>").html("idMarco")).append($("<th>").html("Descripción")))
-                .append($("<tbody>")));
-                
-    $("#listaMarcos").append(t);
-    var indice = 0;
-    t.DataTable({
-            "aaData": historial,
-            "columns": [
-                { "data": "id" },
-                { "data": "nombre" }
-            ],
-            "columnDefs": [
-                    { "visible": true, "sClass": "hidden", "searchable": false, "targets": 0 },
-                    { "visible": true, "searchable": true, "targets": 1, 
-                        "sClass": "text-center",
-                        "render": function (data) {
-                                    indice++;
-                                    return "<a id='marco" + indice + "' class='text-center' style='cursor: pointer' href=javascript:cargarEstructuraMarco('#marco" + indice + "')>" + data + "</a>";
-                                }
-                    }
-            ],
-            "fnInitComplete": function () {
-                $("#tablaListaMarcos_paginate").addClass("text-center").find("a").addClass("btn btn-primary");
-                $("#tablaListaMarcos_previous").addClass("pull-left");
-                $("#tablaListaMarcos_next").addClass("pull-right");
-            }
-        });
-
-        t.on('search.dt', function () {
-                    setTimeout(function () { 
-                         $("#tablaListaMarcos_paginate").addClass("text-center").find("a").addClass("btn btn-primary");
-                         $("#tablaListaMarcos_previous").addClass("pull-left");
-                         $("#tablaListaMarcos_next").addClass("pull-right");
-                     }, 100);
-                });
-}
-
-function cargarListaMarcoGuardado(idMarco, nombre, indice){
-    var elemento = $("<fieldset>").addClass("col-xs-12 col-sm-11 col-md-12 col-lg-12")
-                        .append($("<p>").addClass("col-xs-12 col-sm-11 col-md-12 col-lg-12 input-group")
-                            .append($("<a>").attr("id","marco" + indice).html(indice + " - " + nombre).attr("href","#")
-                                .addClass("col-xs-12 col-sm-11 col-md-12 col-lg-12")));
-    return elemento;
-}
-
-function cargarListaNuevoMarco(){
-    var elemento = $("<fieldset>").addClass("col-xs-12 col-sm-11 col-md-12 col-lg-12")
-                        .append($("<p>").addClass("col-xs-12 col-sm-11 col-md-12 col-lg-12 input-group")
-                            .append($("<input>").attr("id","NuevoMarco").attr("placeholder","Sin título").attr("name","NuevoMarco").attr("type","text")
-                                .addClass("col-xs-12 col-sm-11 col-md-12 col-lg-12 sinBorde form-control bordeError current nombreMarco "))
-                            .append($("<span>").addClass("input-group-addon").attr("onclick","guardarMarco('-1')").append($("<i>").addClass("fa fa-floppy-o"))));
-    return elemento;
-}
-
-function cargarEstructuraMarco(idEnlace){
-    nombreMarcoActual = $(idEnlace).text();
-    $("#tablaListaMarcos tr").removeClass("current");
-    $(idEnlace).parents("tr").addClass("current");
-
-    idMarcoActual = $(idEnlace).parents("tr").find("td.hidden").text();
-    
-    $.post("/marcos/buscar", {idMarco: idMarcoActual, idUsuario: sessionStorage.getItem("token")}, function(marco) {
-        if(marco != "-1"){
-            marco.filas = JSON.parse(marco.filas);
-            marco.columnas = JSON.parse(marco.columnas);
-
-            $("#btnActualizar").prop("disabled", false);
-
-            $("#contenido").html($("<div>").html(""));
-            var total = marco.filas[0][0];
-            var color = marco.filas[0][1].split(",");
-            for (var i = 1; i <= total; i++) {
-                switch(i){
-                    case 1:
-                        crearNivelSuperior(color[i-1], marco.columnas[i-1][1]);
-                        break;
-                    case 2:
-                        $("#contenido > div:nth-last-child(1)").after(crearFila(color[i-1]));
-                        cambiarColor("color" + numFilas);
-                        break;
-                    default:
-                        crearNivelInferior(color[i-1], marco.columnas[i-2][1]);
-                        break;
-                }
-            }
-        }
-    });
-}
-
-function lanzarModal(accion){
-    var titulo = "";
-
-    switch(accion){
-        case "actualizar": 
-            titulo = "Actualizar Marco";
-            $("#nombreMarco").val(nombreMarcoActual).attr("placeholder",nombreMarcoActual);
-        break;
-        case "guardar":
-            titulo = "Guardar Marco";
-        break;
-    }
-
-    $("#modalEnviar").attr("onclick","guardarMarco('" + accion + "')");
-
-    $("#labelConfirmacion").html("¿Está seguro que desea " + accion + " este marco?");
-    $("#labelConfirmacion .modal-title").html(titulo);
-
-    $("#modalMarco").modal('show');
+function cambiarColor2(idInput){
+    var color = $("#" + idInput).next("input").val();
+    $("#" + idInput).css("background-color",color);
+    $("#" + idInput).attr("data-color",color);
 }

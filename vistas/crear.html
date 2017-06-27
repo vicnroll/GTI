@@ -70,13 +70,20 @@
       <div class=" col-md-offset-1 col-sm-offset-1 col-xs-12 col-sm-10 col-md-8 col-lg-6 bordeGrueso colorForndoBlanco altoMinimo paddingInterior">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
           <fieldset><p>
-            <button class="btn btn-default pull-left" title="Guardar Marco Nuevo" onclick="lanzarModal('guardar')"><i class="fa fa-save"></i> - Guardar Marco</button>
-            <button id="btnActualizar" class="btn btn-default pull-right" title="Actualizar estructura del Marco" onclick="lanzarModal('actualizar')" disabled><i class="fa fa-pencil-square-o"></i> - Actualizar Marco</button>
+            <button id="btnGuardar" class="btn btn-default pull-left" title="Guardar Marco Nuevo" onclick="lanzarModal('guardar')" disabled><i class="fa fa-save"></i> Guardar</button>
+            <button id="btnEliminar" class="btn btn-default pull-left" title="Guardar Marco Nuevo" onclick="lanzarModal('eliminar')" disabled><i class="fa fa-save"></i> Eliminar</button>
+            <button id="btnActualizar" class="btn btn-default pull-right" title="Actualizar estructura del Marco" onclick="lanzarModal('actualizar')" disabled><i class="fa fa-pencil-square-o"></i> Actualizar</button>
             </p></fieldset>
         </div>
         <!-- BOTÓN SUPERIOR -->
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-          <fieldset><p><button class="btn btn-primary" title="Añadir nivel superior" onclick="crearNivelSuperior()"><i class="fa fa-plus"></i></button></p></fieldset>
+          <fieldset class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+            <p class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <span class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <button class="btn btn-primary" title="Añadir nivel superior" onclick="crearNivelSuperior()"><i class="fa fa-plus"></i></button>
+              </span>
+            </p>
+          </fieldset>
         </div>
 
         <!-- CONTENIDO DEL MARCO -->
@@ -86,19 +93,25 @@
 
         <!-- BOTÓN INFERIOR -->
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-          <fieldset><p><button class="btn btn-primary" title="Añadir nivel superior" onclick="crearNivelInferior()"><i class="fa fa-plus"></i></button></p></fieldset>
+          <fieldset class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+            <p class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <span class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <button class="btn btn-primary" title="Añadir nivel inferior" onclick="crearNivelInferior()"><i class="fa fa-plus"></i></button>
+              </span>
+            </p>
+          </fieldset>
         </div>
       </div>
     </div>
 
     <!-- Modal para guardar/actualizar marcos -->
-    <div id="modalMarco" class="modal fade" role="dialog">
+    <div id="modalMarco" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog">
 
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" class="close" data-dismiss="modal" onclick="reestablecerBody()">&times;</button>
             <h4 class="modal-title"></h4>
           </div>
           <div class="modal-body">
@@ -107,24 +120,24 @@
             </p></fieldset>
             
             <fieldset><p>
-              <label>Nombre Marco</label><br>
+              <label id="lblNombre">Nombre Marco</label><br>
               <input id="nombreMarco" type="text" placeholder="Nombre del Marco" autofocus class="sinBorde form-control bordeError nombreMarco"/>
             </p></fieldset>
           </div>
           <div class="modal-footer">
-            <button id="modalEnviar" class="btn btn-default pull-left"><i class="fa fa-paper-plane "></i> - Enviar</button>
-            <button class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+            <button id="btnEnviar" class="btn btn-default pull-left" onclick="reestablecerBody()"></button>
+            <button class="btn btn-default pull-right" data-dismiss="modal" onclick="reestablecerBody()">Cerrar</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal para guardar/actualizar marcos -->
-    <div id="modalConfirmacion" class="modal fade" role="dialog">
+    <!-- Modal de confirmación marcos -->
+    <div id="modalConfirmacion" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" class="close" data-dismiss="modal" onclick="reestablecerBody()">&times;</button>
             <h4 class="modal-title">Enviando Datos</h4>
           </div>
           <div class="modal-body text-center">
@@ -137,7 +150,7 @@
             </p></fieldset>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+            <button class="btn btn-default pull-right" data-dismiss="modal" onclick="reestablecerBody()">Cerrar</button>
           </div>
         </div>
       </div>

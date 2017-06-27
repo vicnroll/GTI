@@ -63,3 +63,115 @@ footer {
 .odd a {
     color: white !important;
 }
+
+.fa-times, .fa-times-o, .fa-columns, .fa-pencil-square-o, .fa-minus {
+    cursor: pointer;
+}
+/* ARROWS */
+.arrowText {
+    position:relative;
+    margin: 20px;
+    width:50px;
+    height: 48px;
+    background: #ddd;
+    border:solid 1px #555;
+    float: left;
+}
+.arrowText:before, .arrowText:after {
+    content: " ";
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+}
+
+/* TOP ARROW */
+.arrowTop:before, .arrowTop:after {
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    left: -1px;
+}
+.arrowTop:after {
+    border-bottom: 16px solid #ddd;
+    top: -15px;
+    z-index: 2;
+}
+
+.arrowTop:before {
+    border-bottom: 16px solid black;
+    top: -16px;
+    z-index: 1;
+}
+
+/* BOTTOM ARROW */
+.arrowBottom:before, .arrowBottom:after {
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    left: 0;
+}
+.arrowBottom:after {
+    border-top: 16px solid #ddd;
+    bottom: -16px;
+    z-index: 2;
+}
+.arrowBottom:before {
+    border-top: 16px solid black;
+    bottom: -17px;
+    z-index: 1;
+}
+
+/* RIGHT ARROW */
+.arrowRight:before, .arrowRight:after {
+    border-bottom: 25px solid transparent;
+    border-top: 25px solid transparent;
+    top:-1px;
+}
+.arrowRight:after {
+    border-left: 16px solid #ddd;
+    right: -15px;
+    z-index: 2;
+}
+
+.arrowRight:before {
+    border-left: 16px solid black;
+    right: -16px;
+    z-index: 1;
+}
+
+/* LEFT ARROW */
+.arrowLeft:before, .arrowLeft:after {
+    border-top: 25px solid transparent;
+    border-bottom: 25px solid transparent;
+
+    top:-1px
+}
+.arrowLeft:after {
+    border-right: 16px solid #ddd;
+    left: -15px;
+    z-index: 2;
+}
+.arrowLeft:before {
+    border-right: 16px solid black;
+    left: -16px;
+    z-index: 1;
+}
+
+.separador {
+    color: white;
+}
+
+.split{
+    margin-top: 12px;
+}
+
+.split i {
+    margin: auto 5px;
+}
+
+.sinPaddindLeft {
+    padding-left: 0px !important;
+}
+
+.sinMarginLeft {
+    margin-left: 0px !important;
+}

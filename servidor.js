@@ -26,6 +26,8 @@ var MarcoSchema = dbMarcos.Schema({
     idUsuario: {type: String},
     filas: {type: String},
     columnas: {type: String},
+    separaciones: {type: String},
+    direcciones: {type:String},
     fechaCreacion: {type: String},
     fechaActualizacion: {type: String}
 });
@@ -99,7 +101,6 @@ app.post('/usuarios/registrar', function(req, res) {
             }
         }
     });
-    
 });
 
 app.post('/usuarios/eliminar', function(req, res) {
@@ -123,7 +124,7 @@ app.post('/marcos/buscar', function(req, res) {
                 console.log("[%s] 404 MARCO NO ENCONTRADO",  new Date());
                 res.send("-1");
             } else {
-                console.log("[%s] ENCONTRADO MARCO: %s",  new Date(), fMarco.nombre);
+                console.log("[%s] ENCONTRADO MARCO: '%s' ; %s",  new Date(), fMarco.nombre);
                 res.send(fMarco);
             }
         }
@@ -171,6 +172,8 @@ app.post('/marcos/guardar', function(req, res) {
                     idUsuario: req.body.idUsuario,
                     filas: req.body.filas,
                     columnas: req.body.columnas,
+                    separaciones: req.body.separaciones,
+                    direcciones: req.body.direcciones,
                     fechaCreacion: new Date()
                 });
                 marco.save(function(error, fMarco){
@@ -203,6 +206,8 @@ app.post('/marcos/actualizar', function(req, res) {
                 fMarco.nombre = req.body.nombre;
                 fMarco.filas = req.body.filas;
                 fMarco.columnas = req.body.columnas;
+                fMarco.separaciones = req.body.separaciones;
+                fMarco.direcciones = req.body.direcciones;
                 fMarco.fechaActualizacion = new Date();
 
                 fMarco.save(function(error, fMarco){
@@ -220,10 +225,15 @@ app.post('/marcos/actualizar', function(req, res) {
 });
 
 app.post('/marcos/eliminar', function(req, res) {
-    console.log("[%s] ELIMINANDO MARCO: %s ; %s;", new Date(), req.body.nombre, req.body.idMarco); //, idUsuario: req.body.idUsuario
-    ModeloMarco.remove({ _id: req.body.idMarco }, function(error, res){
-        if(error) console.log("[%s] MARCO %s NO BORRADO", new Date(), req.body.nombre);
-        else console.log("[%s] MARCO %s BORRADO", new Date()), req.body.nombre;
+    console.log("[%s] ELIMINANDO MARCO: %s;", new Date(), req.body.idMarco); //, idUsuario: req.body.idUsuario
+    ModeloMarco.remove({ _id: req.body.idMarco }, function(error, fMarco){
+        if(error) {
+            console.log("[%s] MARCO NO BORRADO", new Date());
+            res.send("-1");
+        } else {
+            console.log("[%s] MARCO BORRADO", new Date());
+            res.send("1");
+        }
     });
 });
 
